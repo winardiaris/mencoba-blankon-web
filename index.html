@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Imag</title>
+    <link href="static/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="static/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="static/css/desktop.css" rel="stylesheet" />
+		<link href="static/css/bevel.css" rel="stylesheet" />
+    <link href="static/css/custom.css" rel="stylesheet" />
+    <link href="static/css/jquery-ui.min.css" rel="stylesheet" />
+		<link href="static/css/jquery-ui.structure.min.css" rel="stylesheet" />
+		<link href="static/css/jquery-ui.theme.min.css" rel="stylesheet" />
+    
+     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+     <script src="static/js/jquery-1.11.3.min.js"></script>
+    </head>
+<body>
+<div id="main">
+<div id="wrapper">
+		<div imag="panel"></div>
+		<!--<div class="col-md-2 col-md-offset-5 well well-sm well-default"  imag="droppable" ></div>-->
+		
+		<div imag="draggable" title="wp_007.jpg" icon="static/img/button/eog.svg" class="col-md-4 col-md-offset-2 ">
+			<div class="content">
+				<img  src="static/img/wallpaper/wp_007.jpg">
+			</div>
+		</div>
+		<div imag="draggable" title="wp_004.jpg" icon="static/img/button/eog.svg" class="col-md-4 col-md-offset-2 ">
+			<div class="content">
+				<img  src="static/img/wallpaper/wp_004.jpg">
+			</div>
+		</div>
+		<div imag="draggable" title="wp_003.jpg" icon="static/img/button/eog.svg" class="col-md-4 ">
+			<div class="content">
+					<img  src="static/img/wallpaper/wp_003.jpg">
+			</div>
+		</div>
+	
+	
+		<div id="launcher"></div>
+		
+		
+		
+		
+		<!--- END -->
+	</div>
+</div>
+
+
+
+
+
+		
+		
+		<script src="static/js/jquery-ui.min.js"></script>
+		<script src="static/js/bootsrap.min.js" ></script>
+		<script src="static/js/jquery.jclock.js" ></script>
+<!--
+		<script src="static/widget/weather/js/jquery.min.js"></script>
+-->
+		<script src="static/widget/weather/js/script.js"></script>
+		
+		
+		<script>
+			$(function() {
+								  
+			    $(document).ready(function(){
+						var zindex = 0;
+							$("[imag='panel']")
+							.addClass("imag-panel shadow");
+							
+							$("[imag='draggable']")
+								.addClass("draggable shadow")
+								.draggable({
+										stop: function(event, ui){           
+								        var top = getTop(ui.helper);
+								        ui.helper.css('position', 'fixed');
+								        ui.helper.css('top', top+"px");
+								    },
+								    containment: "#wrapper" 
+								})
+								.resizable()
+								.prepend("<div class='imag-wm'><div class='pull-right'><img src='static/img/wm/minimize.svg' imag='minimize'><img src='static/img/wm/maximize.svg' imag='maximize'><img src='static/img/wm/close.svg' imag='close'></div></div>")
+								.click(function(){
+										zindex=zindex + 1;
+										$(this).css({"z-index":zindex});
+										$(".active").removeClass("active");
+										
+										setActive($(this));
+								});
+							
+							
+							$("[imag='minimize']").click(function(){
+									var parents =  $(this).parent().parent().parent();
+									var nama = parents.attr("title");
+									parents.fadeOut();
+									parents.removeClass("active");
+									$("[imag='panel']").find(".applist[title='"+nama+"']").removeClass("active");
+									$("[imag='panel']").find(".applist[title='"+nama+"']").addClass("minimized");
+									
+							});
+							$("[imag='maximize']").click(function(){
+									setMax($(this));
+							});
+							$(".imag-wm").dblclick(function(){
+									setMax($(this).children().children());
+							});
+							
+							$("[imag='close']").click(function(){
+									setHide($(this));
+							});
+						
+							
+												
+						b = $("[imag='draggable']").length;
+						for(i=0;i<b;i++){
+							var nama = $("[imag='draggable']:eq("+i+")").attr("title");
+							var icon = $("[imag='draggable']:eq("+i+")").attr("icon");
+							$("[imag='panel']").prepend("<div title='"+nama+"' class='applist '><img src='"+icon+"' class='icon'></div>");
+							$(".imag-wm:eq("+i+")").prepend("<img src='"+icon+"' class='icon'><span class='text-center'>"+nama+"</span>");
+						}
+							$("[imag='panel']").prepend("<div  class='io'><img src='static/img/button/distributor-logo-blankon.svg'></div>");
+							$("[imag='panel']").append("<div class='systray pull-right'><img src='static/img/button/audio-volume-low.svg' ><img src='static/img/button/nm-signal-75.svg' ><img src='static/img/button/battery-100-charging.svg' ><div id='clock'></div><img src='static/img/button/user-desktop-symbolic.svg' class='desktop'></div>");
+							$(".applist").click(function() {
+									var nama = $(this).attr("title");
+									var ee = $("[imag='draggable']").attr("title");
+									
+									if($(this).hasClass("minimized")){
+										zindex=zindex + 1;
+										$("#wrapper").find("[imag='draggable'][title='"+nama+"']").show().css({"z-index":zindex});
+										$(this).removeClass("minimized");
+										$(".active").removeClass("active");
+										$(this).addClass("active");
+									}
+									else if($(this).hasClass("active")){
+										$("#wrapper").find("[imag='draggable'][title='"+nama+"']").fadeOut();
+										$(this).addClass("minimized");
+										$(".active").removeClass("active");
+										
+									}
+									else{
+										$("#wrapper").find("[imag='draggable'][title='"+nama+"']").show().css({"z-index":zindex+1});
+										$(".active").removeClass("active");
+										$(this).addClass("active");
+									}
+							});
+							
+							
+							var date = {
+						        format: '%a %b %d, %Y %H:%M:%S' // 24-hour
+						      }
+						      $('#clock').jclock(date);
+						      
+						      
+						  function setMax(ele){
+								maxheight = $(document).height();
+								maxwidth = $(document).width();
+								var parents = ele.parent().parent().parent();
+								if(parents.hasClass("maximized")){
+									parents.removeClass("maximized");
+								}
+								else{
+									parents.addClass("maximized");
+									parents.css({"height":maxheight+" !important","width":maxwidth+" !important"});
+								}
+								
+								if(parents.hasClass("col-md-offset-1") ||  parents.hasClass("col-md-offset-2") || parents.hasClass("col-md-offset-3") || parents.hasClass("col-md-offset-4") || parents.hasClass("col-md-offset-5") || parents.hasClass("col-md-offset-6") || parents.hasClass("col-md-offset-7 ") || parents.hasClass("col-md-offset-8 ") || parents.hasClass("col-md-offset-9") || parents.hasClass("col-md-offset-10") || parents.hasClass("col-md-offset-11")){
+									parents.removeClass("col-md-offset-1");parents.removeClass("col-md-offset-2");parents.removeClass("col-md-offset-3");parents.removeClass("col-md-offset-4");parents.removeClass("col-md-offset-5");parents.removeClass("col-md-offset-6");parents.removeClass("col-md-offset-7");parents.removeClass("col-md-offset-8");parents.removeClass("col-md-offset-9");parents.removeClass("col-md-offset-10");parents.removeClass("col-md-offset-11");
+								}
+							}
+							
+							function setShow(ele){
+								var titles = ele.attr("title");
+								$("div[title='"+titles+"']").fadeIn();						
+								console.log("show: "+titles);
+							};
+						
+							$("[imag='droppable']")
+							.addClass("droppable");
+							
+							function setActive(ele){
+								var titles = ele.attr("title");
+								ele.addClass("active");
+								$("[imag='panel']").find(".applist[title='"+titles+"']").addClass("active");
+							}
+							
+							function setHide(ele){
+								parents = ele.parent().parent().parent()
+								parents.fadeOut();
+								var titles = parents.attr("title");
+								$("[imag='panel']").find(".applist[title='"+titles+"']").remove();
+							}
+							function getTop(ele){
+							    var eTop = ele.offset().top;
+							    var wTop = $(window).scrollTop();
+							    var top = eTop - wTop;
+							    return top; 
+							}
+						//
+	
+					});
+			});
+		</script>
+</body>
+</html>
